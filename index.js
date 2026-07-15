@@ -20,8 +20,11 @@ const dataDir =
 
 const uploadsFolder = path.join(dataDir, 'uploads');
 if (!fs.existsSync(uploadsFolder)) {
+  console.log('Database:', path.join(dataDir, 'archive.db'));
+console.log('Uploads:', uploadsFolder);
   fs.mkdirSync(uploadsFolder, { recursive: true });
 }
+
 
 const client = new Client({
   intents: [
