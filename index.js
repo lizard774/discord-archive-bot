@@ -10,13 +10,16 @@ const fs = require('fs');
 const path = require('path');
 const db = require('./database');
 
+require('./viewer');
+
 if (!process.env.DISCORD_TOKEN) {
   console.error('DISCORD_TOKEN is missing from the .env file.');
   process.exit(1);
 }
 
 const dataDir =
-  process.env.RAILWAY_VOLUME_MOUNT_PATH || path.join(__dirname, 'data');
+  process.env.RAILWAY_VOLUME_MOUNT_PATH ||
+  path.join(__dirname, 'data');
 
 const uploadsFolder = path.join(dataDir, 'uploads');
 
@@ -37,14 +40,18 @@ const saveMessage = db.prepare(`
     id,
     guild_id,
     guild_name,
+    guild_icon_url,
     channel_id,
     channel_name,
     author_id,
     author_name,
+    author_avatar_url,
     content,
-    created_at
+    reply_to_message_id,
+    created_at,
+    edited_at
   )
-  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 `);
 
 const saveAttachment = db.prepare(`
@@ -73,12 +80,22 @@ client.on(Events.MessageCreate, async message => {
       message.id,
       message.guild.id,
       message.guild.name,
+      message.guild.iconURL({
+        extension: 'png',
+        size: 128
+      }),
       message.channel.id,
       message.channel.name ?? 'unknown-channel',
       message.author.id,
       message.author.tag,
+      message.author.displayAvatarURL({
+        extension: 'png',
+        size: 128
+      }),
       message.content,
-      message.createdAt.toISOString()
+      message.reference?.messageId ?? null,
+      message.createdAt.toISOString(),
+      message.editedAt?.toISOString() ?? null
     );
 
     for (const attachment of message.attachments.values()) {
