@@ -11,8 +11,11 @@ if (!fs.existsSync(dataDir)) {
 }
 
 const dbPath = path.join(dataDir, 'archive.db');
+console.log(`Database path: ${dbPath}`);
+
 const db = new Database(dbPath);
 
+// Messages table
 db.prepare(`
   CREATE TABLE IF NOT EXISTS messages (
     id TEXT PRIMARY KEY,
@@ -27,6 +30,7 @@ db.prepare(`
   )
 `).run();
 
+// Attachments table
 db.prepare(`
   CREATE TABLE IF NOT EXISTS attachments (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -39,5 +43,33 @@ db.prepare(`
     created_at TEXT
   )
 `).run();
+
+// Indexes to improve performance
+db.prepare(`
+  CREATE INDEX IF NOT EXISTS idx_messages_channel_created
+  ON messages(channel_id, created_at)
+`).run();
+
+db.prepare(`
+  CREATE INDEX IF NOT EXISTS idx_messages_guild
+  ON messages(guild_id)
+`).run();
+
+db.prepare(`
+  CREATE INDEX IF NOT EXISTS idx_messages_author
+  ON messages(author_id)
+`).run();
+
+db.prepare(`
+  CREATE INDEX IF NOT EXISTS idx_messages_created
+  ON messages(created_at)
+`).run();
+
+db.prepare(`
+  CREATE INDEX IF NOT EXISTS idx_attachments_message
+  ON attachments(message_id)
+`).run();
+
+console.log('Database initialized successfully.');
 
 module.exports = db;
