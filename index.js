@@ -19,11 +19,17 @@ const dataDir =
   process.env.RAILWAY_VOLUME_MOUNT_PATH || path.join(__dirname, 'data');
 
 const uploadsFolder = path.join(dataDir, 'uploads');
+
 if (!fs.existsSync(uploadsFolder)) {
-  console.log('Database:', path.join(dataDir, 'archive.db'));
-console.log('Uploads:', uploadsFolder);
   fs.mkdirSync(uploadsFolder, { recursive: true });
 }
+
+console.log('Database:', path.join(dataDir, 'archive.db'));
+console.log('Uploads:', uploadsFolder);
+console.log(
+  'Railway volume path:',
+  process.env.RAILWAY_VOLUME_MOUNT_PATH || 'Not running on Railway'
+);
 
 
 const client = new Client({
