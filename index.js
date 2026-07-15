@@ -15,8 +15,10 @@ if (!process.env.DISCORD_TOKEN) {
   process.exit(1);
 }
 
-const uploadsFolder = path.join(__dirname, 'uploads');
+const dataDir =
+  process.env.RAILWAY_VOLUME_MOUNT_PATH || path.join(__dirname, 'data');
 
+const uploadsFolder = path.join(dataDir, 'uploads');
 if (!fs.existsSync(uploadsFolder)) {
   fs.mkdirSync(uploadsFolder, { recursive: true });
 }
