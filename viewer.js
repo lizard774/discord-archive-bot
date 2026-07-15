@@ -116,15 +116,14 @@ app.get('/api/channels/:channelId/messages', (req, res) => {
       };
     });
 
-    res.json(results);
+     res.json(results);
   } catch (error) {
     console.error('Message loading error:', error);
+
     res.status(500).json({
       error: 'Unable to load messages.'
     });
   }
-});
-
 });
 
 app.get('/health', (req, res) => {
