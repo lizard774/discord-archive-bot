@@ -1,6 +1,17 @@
 const Database = require('better-sqlite3');
+const path = require('path');
+const fs = require('fs');
 
-const db = new Database('archive.db');
+const dataDir =
+  process.env.RAILWAY_VOLUME_MOUNT_PATH || path.join(__dirname, 'data');
+
+// Create the directory if it doesn't exist
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
+
+const dbPath = path.join(dataDir, 'archive.db');
+const db = new Database(dbPath);
 
 db.prepare(`
   CREATE TABLE IF NOT EXISTS messages (
